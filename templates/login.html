@@ -4,21 +4,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول | مرسل رواتب واتساب</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Preload Primary Thmanyah Fonts -->
+    <link rel="preload" href="{{ url_for('static', path='fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', path='fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
     <script>
+        window.tailwind = window.tailwind || {};
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Thmanyah', 'system-ui', 'sans-serif'],
+                        sans: ['Thmanyah', 'Segoe UI', 'Tahoma', 'Arial', 'sans-serif'],
                     }
                 }
             }
         };
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="/static/css/style.css?v=32">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons (100% Local, Zero External CDN Dependency) -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/fontawesome.min.css') }}?v=36">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}?v=36">
     <style>
         body { background: #f8fafc; }
         .field { width: 100%; background: #fff; border: 1.5px solid #cbd5e1; border-radius: .75rem; padding: .75rem 1rem; font-size: .9rem; font-weight: 600; transition: border-color .15s, box-shadow .15s; }

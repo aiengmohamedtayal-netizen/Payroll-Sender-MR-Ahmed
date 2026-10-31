@@ -5,7 +5,9 @@
 /* Light - 300 */
 @font-face {
     font-family: 'Thmanyah';
-    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Light.woff2') format('woff2'),
+    src: local('Thmanyah Light'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Light.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Light.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Light.otf') format('opentype');
     font-weight: 300;
     font-style: normal;
@@ -15,7 +17,10 @@
 /* Regular - 400 */
 @font-face {
     font-family: 'Thmanyah';
-    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Regular.woff2') format('woff2'),
+    src: local('Thmanyah'),
+         local('Thmanyah-Regular'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Regular.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Regular.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
@@ -25,9 +30,23 @@
 /* Medium - 500 */
 @font-face {
     font-family: 'Thmanyah';
-    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Medium.woff2') format('woff2'),
+    src: local('Thmanyah Medium'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Medium.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Medium.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Medium.otf') format('opentype');
     font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Semibold - 600 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: local('Thmanyah Bold'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Bold.otf') format('opentype');
+    font-weight: 600;
     font-style: normal;
     font-display: swap;
 }
@@ -35,9 +54,23 @@
 /* Bold - 700 */
 @font-face {
     font-family: 'Thmanyah';
-    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2'),
+    src: local('Thmanyah Bold'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Bold.otf') format('opentype');
     font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Extra Bold - 800 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: local('Thmanyah Black'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Black.otf') format('opentype');
+    font-weight: 800;
     font-style: normal;
     font-display: swap;
 }
@@ -45,7 +78,9 @@
 /* Black - 900 */
 @font-face {
     font-family: 'Thmanyah';
-    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2'),
+    src: local('Thmanyah Black'),
+         url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Black.otf') format('opentype');
     font-weight: 900;
     font-style: normal;
@@ -55,7 +90,9 @@
 /* Thmanyah Serif Display (Bold - 700) */
 @font-face {
     font-family: 'Thmanyah Serif Display';
-    src: url('../fonts/thmanyah/thmanyahserifdisplay/woff2/thmanyahserifdisplay-Bold.woff2') format('woff2'),
+    src: local('Thmanyah Serif Display'),
+         url('../fonts/thmanyah/thmanyahserifdisplay/woff2/thmanyahserifdisplay-Bold.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahserifdisplay/woff2/thmanyahserifdisplay-Bold.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Bold.otf') format('opentype');
     font-weight: 700;
     font-style: normal;
@@ -65,7 +102,9 @@
 /* Thmanyah Serif Text (Regular - 400) */
 @font-face {
     font-family: 'Thmanyah Serif Text';
-    src: url('../fonts/thmanyah/thmanyahseriftext/woff2/thmanyahseriftext-Regular.woff2') format('woff2'),
+    src: local('Thmanyah Serif Text'),
+         url('../fonts/thmanyah/thmanyahseriftext/woff2/thmanyahseriftext-Regular.woff2') format('woff2'),
+         url('/static/fonts/thmanyah/thmanyahseriftext/woff2/thmanyahseriftext-Regular.woff2') format('woff2'),
          url('../fonts/thmanyah/thmanyahseriftext/otf/thmanyahseriftext-Regular.otf') format('opentype');
     font-weight: 400;
     font-style: normal;
@@ -73,11 +112,44 @@
 }
 
 /* ==========================================================================
+   Font Awesome Webfonts (100% Local, Zero External CDN Dependency)
+   ========================================================================== */
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 900;
+    font-display: block;
+    src: url('../webfonts/fa-solid-900.woff2') format('woff2'),
+         url('/static/webfonts/fa-solid-900.woff2') format('woff2'),
+         url('../webfonts/fa-solid-900.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Font Awesome 6 Free';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('../webfonts/fa-regular-400.woff2') format('woff2'),
+         url('/static/webfonts/fa-regular-400.woff2') format('woff2'),
+         url('../webfonts/fa-regular-400.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Font Awesome 6 Brands';
+    font-style: normal;
+    font-weight: 400;
+    font-display: block;
+    src: url('../webfonts/fa-brands-400.woff2') format('woff2'),
+         url('/static/webfonts/fa-brands-400.woff2') format('woff2'),
+         url('../webfonts/fa-brands-400.ttf') format('truetype');
+}
+
+/* ==========================================================================
    Design Tokens & Variables (Light & Luxury Dark Theme)
    ========================================================================== */
 
 :root {
-    --font-family-primary: 'Thmanyah', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-primary: 'Thmanyah', 'Segoe UI', Tahoma, Arial, system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
     --font-family-serif-display: 'Thmanyah Serif Display', serif;
     --font-family-serif-text: 'Thmanyah Serif Text', serif;
 
@@ -87,19 +159,19 @@
     --font-weight-bold: 700;
     --font-weight-black: 900;
 
-    /* Light Palette */
+    /* Light Palette - Clean, Modern Slate with High Contrast */
     --bg-page: #f8fafc;
     --card-bg: #ffffff;
     --card-border: #e2e8f0;
     --card-border-hover: #cbd5e1;
-    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+    --card-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.03);
 
     --text-main: #0f172a;
-    --text-muted: #64748b;
-    --text-subtle: #94a3b8;
+    --text-muted: #475569;
+    --text-subtle: #64748b;
 
-    --primary: #10b981;
-    --primary-dark: #059669;
+    --primary: #059669;
+    --primary-dark: #047857;
     --wa-green: #25D366;
     --wa-dark: #075E54;
     --wa-light: #dcf8c6;
@@ -109,18 +181,18 @@
     --input-text: #0f172a;
 
     --sheet-cell-bg: #ffffff;
-    --sheet-cell-border: #cbd5e1;
+    --sheet-cell-border: #e2e8f0;
     --sheet-cell-text: #0f172a;
-    --sheet-cell-focus: #f0fdf4;
+    --sheet-cell-focus: #ecfdf5;
 }
 
-/* Luxury Dark Mode Palette (Inspired by frontend-ui-dark-ts: #09090b, #18181b, Glassmorphism) */
+/* Luxury Dark Mode Palette - Deep Obsidian, Jewel Accents, Glassmorphism */
 html.dark {
     --bg-page: #09090b;
-    --card-bg: rgba(24, 24, 27, 0.85);
+    --card-bg: #141418;
     --card-border: rgba(255, 255, 255, 0.08);
-    --card-border-hover: rgba(255, 255, 255, 0.16);
-    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+    --card-border-hover: rgba(16, 185, 129, 0.35);
+    --card-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.6), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
 
     --text-main: #fafafa;
     --text-muted: #a1a1aa;
@@ -132,14 +204,14 @@ html.dark {
     --wa-dark: #075E54;
     --wa-light: #064e3b;
 
-    --input-bg: #18181b;
+    --input-bg: #121215;
     --input-border: rgba(255, 255, 255, 0.12);
     --input-text: #fafafa;
 
-    --sheet-cell-bg: #18181b;
+    --sheet-cell-bg: #121215;
     --sheet-cell-border: #27272a;
     --sheet-cell-text: #f4f4f5;
-    --sheet-cell-focus: rgba(16, 185, 129, 0.15);
+    --sheet-cell-focus: rgba(16, 185, 129, 0.2);
 }
 
 /* Apply Thmanyah Globally Across All Elements */
@@ -147,11 +219,56 @@ html.dark {
     display: none !important;
 }
 
+/* Universal Typography - Apply Thmanyah across all text elements */
 html, body, button, input, optgroup, select, textarea,
-h1, h2, h3, h4, h5, h6, p, a, span, label,
-table, thead, tbody, tr, th, td,
+h1, h2, h3, h4, h5, h6, p, a,
+label, table, thead, tbody, tr, th, td,
 .font-sans, .field, .btn, .tab-btn {
-    font-family: var(--font-family-primary);
+    font-family: var(--font-family-primary) !important;
+}
+
+span:not([class*="fa-"]):not([class^="fa-"]),
+div:not([class*="fa-"]):not([class^="fa-"]) {
+    font-family: inherit;
+}
+
+/* Ensure Font Awesome Icons Render With Their Official Webfonts */
+.fa, .fas, .far, .fal, .fad, .fa-solid, .fa-regular, .fa-light, .fa-thin, .fa-duotone,
+.fa-brands, .fab,
+[class^="fa-"], [class*=" fa-"] {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    display: inline-block;
+    font-style: normal !important;
+    font-variant: normal !important;
+    line-height: 1 !important;
+    text-rendering: auto !important;
+}
+
+.fa-brands, .fab {
+    font-family: "Font Awesome 6 Brands" !important;
+    font-weight: 400 !important;
+}
+
+.fa-solid, .fas {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+}
+
+.fa-regular, .far {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 400 !important;
+}
+
+.fa::before, .fas::before, .fab::before, .far::before, .fa-solid::before, .fa-regular::before, .fa-brands::before,
+[class^="fa-"]::before, [class*=" fa-"]::before {
+    font-family: inherit !important;
+    font-style: normal !important;
+}
+
+/* Preserve Monospace Elements */
+.font-mono, code, pre, kbd, samp {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
 }
 
 body {
@@ -339,22 +456,59 @@ html.dark .dropzone:hover, html.dark .dropzone.dragover {
     background: rgba(16, 185, 129, 0.08);
 }
 
-/* Sheet Grid Cells */
+/* Sheet Grid Cells & Rows (Light & Dark) */
 .sheet-cell {
-    border: 1px solid var(--sheet-cell-border);
-    padding: 6px 8px;
-    background: var(--sheet-cell-bg);
-    color: var(--sheet-cell-text);
+    border: 1px solid var(--sheet-cell-border) !important;
+    padding: 7px 10px;
+    background-color: var(--sheet-cell-bg) !important;
+    color: var(--sheet-cell-text) !important;
     min-width: 110px;
     outline: none;
-    transition: background-color 0.15s, outline 0.15s;
+    transition: background-color 0.15s, outline 0.15s, border-color 0.15s;
     font-family: var(--font-family-primary);
 }
 
-.sheet-cell:focus {
-    background-color: var(--sheet-cell-focus);
-    outline: 2px solid #10b981;
+#sheetGrid tbody tr:hover td.sheet-cell {
+    background-color: #f1f5f9 !important;
+}
+
+html.dark #sheetGrid tbody tr:hover td.sheet-cell {
+    background-color: #1a1a20 !important;
+}
+
+.sheet-cell:focus, html.dark .sheet-cell:focus {
+    background-color: var(--sheet-cell-focus) !important;
+    outline: 2px solid #10b981 !important;
+    outline-offset: -1px;
     z-index: 10;
+}
+
+.sheet-num-cell {
+    border: 1px solid var(--sheet-cell-border) !important;
+    background-color: #f8fafc !important;
+    color: #64748b !important;
+    text-align: center;
+    font-family: monospace, var(--font-family-primary);
+    font-size: 0.75rem;
+    user-select: none;
+}
+
+html.dark .sheet-num-cell {
+    background-color: #141418 !important;
+    color: #71717a !important;
+    border-color: #27272a !important;
+}
+
+.sheet-del-cell {
+    border: 1px solid var(--sheet-cell-border) !important;
+    background-color: #f8fafc !important;
+    text-align: center;
+    padding: 2px !important;
+}
+
+html.dark .sheet-del-cell {
+    background-color: #141418 !important;
+    border-color: #27272a !important;
 }
 
 /* Pairing Code Slots */

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>مرسل رواتب واتساب | لوحة التحكم</title>
+    <!-- Preload Primary Thmanyah Fonts for Zero Layout Shift & Instant Load -->
+    <link rel="preload" href="{{ url_for('static', path='fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', path='fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') }}" as="font" type="font/woff2" crossorigin>
+    <link rel="preload" href="{{ url_for('static', path='fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Medium.woff2') }}" as="font" type="font/woff2" crossorigin>
+
     <!-- Dark Mode Immediate Initializer (No Flash) -->
     <script>
         (function() {
@@ -17,15 +22,15 @@
             } catch (e) {}
         })();
     </script>
-    <!-- Tailwind CSS CDN with Dark Mode support -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind Configuration (Must execute before cdn.tailwindcss.com script) -->
     <script>
+        window.tailwind = window.tailwind || {};
         tailwind.config = {
             darkMode: 'class',
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Thmanyah', 'system-ui', 'sans-serif'],
+                        sans: ['Thmanyah', 'Segoe UI', 'Tahoma', 'Arial', 'sans-serif'],
                     },
                     colors: {
                         dark: {
@@ -39,18 +44,20 @@
             }
         };
     </script>
-    <!-- Font Awesome Icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons (100% Local, Zero External CDN Dependency) -->
+    <link rel="stylesheet" href="{{ url_for('static', path='css/fontawesome.min.css') }}?v=36">
     <!-- Custom CSS (Thmanyah Font Family 100% Local & Luxury Dark Theme) -->
-    <link rel="stylesheet" href="/static/css/style.css?v=32">
+    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}?v=36">
 </head>
 <body class="bg-slate-50 dark:bg-[#09090b] text-slate-800 dark:text-zinc-100 antialiased min-h-screen flex flex-col font-sans transition-colors duration-200">
 
     <!-- Top Navigation Bar -->
-    <header class="bg-white/90 dark:bg-[#121214]/90 backdrop-blur-md border-b border-slate-200 dark:border-white/10 sticky top-0 z-40 shadow-sm transition-colors duration-200">
+    <header class="bg-white/95 dark:bg-[#121215]/95 backdrop-blur-md border-b border-slate-200 dark:border-white/10 sticky top-0 z-40 shadow-sm transition-colors duration-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-600/25">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-700 flex items-center justify-center text-white shadow-md shadow-emerald-600/30">
                     <i class="fab fa-whatsapp text-2xl"></i>
                 </div>
                 <div>
@@ -64,17 +71,17 @@
 
             <div class="flex items-center gap-2.5">
                 <!-- Theme Toggle Button (Light / Luxury Dark) -->
-                <button type="button" id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-amber-400 border border-slate-200 dark:border-zinc-700 transition" title="التبديل بين الوضع الليلي والنهاري">
+                <button type="button" id="themeToggleBtn" onclick="toggleTheme()" class="inline-flex items-center justify-center w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800/80 dark:hover:bg-zinc-700 text-slate-700 dark:text-amber-400 border border-slate-200 dark:border-zinc-700/80 transition" title="التبديل بين الوضع الليلي والنهاري">
                     <i id="themeToggleIcon" class="fas fa-moon text-sm"></i>
                 </button>
 
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-zinc-200 bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 rounded-xl">
-                    <i class="fas fa-user-circle text-emerald-600 dark:text-emerald-400 text-sm"></i>
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 text-xs font-bold text-slate-700 dark:text-zinc-200 bg-slate-100 dark:bg-zinc-800/80 border border-slate-200 dark:border-zinc-700/80 rounded-xl">
+                    <i class="fas fa-circle-user text-emerald-600 dark:text-emerald-400 text-sm"></i>
                     <span>{{ user.name }}</span>
                 </div>
 
                 <button id="logoutBtn" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 border border-rose-200 dark:border-rose-900/60 rounded-xl transition">
-                    <i class="fas fa-sign-out-alt"></i> تسجيل الخروج
+                    <i class="fas fa-arrow-right-from-bracket text-xs"></i> تسجيل الخروج
                 </button>
             </div>
         </div>
@@ -84,7 +91,7 @@
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 space-y-6 w-full">
 
         <!-- 1. WhatsApp Connection & Overview -->
-        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#18181b]/80 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm">
+        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#141418] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm">
             <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 
                 <!-- Right: WhatsApp Connection Status -->
@@ -94,8 +101,8 @@
                             <i class="fab fa-whatsapp text-2xl text-emerald-600 dark:text-emerald-400"></i>
                             <h2 class="text-base font-bold text-slate-900 dark:text-white">ربط واتساب ويب</h2>
                         </div>
-                        <span id="waStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-400 border border-rose-200 dark:border-rose-800">
-                            <i class="fas fa-circle-xmark ml-1"></i> غير متصل
+                        <span id="waStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-400 border border-rose-200 dark:border-rose-800 flex items-center gap-1">
+                            <i class="fas fa-circle-xmark text-[11px]"></i> غير متصل
                         </span>
                     </div>
 
@@ -104,31 +111,43 @@
                     </p>
 
                     <div class="flex items-center gap-2.5 pt-1">
-                        <button type="button" id="waConnectBtn" onclick="openWhatsAppWebQR()" class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95">
-                            <i class="fas fa-link"></i> بدء ربط واتساب
+                        <button type="button" id="waConnectBtn" onclick="openWhatsAppWebQR()" class="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/25 transition active:scale-95">
+                            <i class="fab fa-whatsapp text-sm"></i> بدء ربط واتساب
                         </button>
                         <button type="button" id="waDisconnectBtn" onclick="disconnectWhatsApp()" class="hidden inline-flex items-center gap-2 px-4 py-2 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-bold transition active:scale-95">
-                            <i class="fas fa-power-off"></i> قطع الاتصال
+                            <i class="fas fa-power-off text-xs"></i> قطع الاتصال
                         </button>
                     </div>
                 </div>
 
-                <!-- Left: 4 Key Stats Cards -->
+                <!-- Left: 4 Key Stats Cards with Polished Colors & Icons -->
                 <div class="lg:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    <div class="bg-slate-50 dark:bg-zinc-900/70 border border-slate-200 dark:border-zinc-800 rounded-xl p-3.5 text-center">
-                        <div class="text-xs text-slate-500 dark:text-zinc-400 font-semibold mb-1">إجمالي الموظفين</div>
-                        <div id="counterTotal" class="text-2xl font-black text-slate-800 dark:text-white">0</div>
+                    <div class="bg-gradient-to-b from-blue-50/80 to-white dark:from-blue-950/30 dark:to-zinc-900/60 border border-blue-200/80 dark:border-blue-900/40 rounded-2xl p-3.5 text-center transition hover:shadow-md">
+                        <div class="w-8 h-8 rounded-xl bg-blue-100 dark:bg-blue-900/60 text-blue-600 dark:text-blue-400 flex items-center justify-center text-xs mx-auto mb-1.5 shadow-xs">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="text-[11px] text-slate-600 dark:text-zinc-400 font-bold mb-0.5">إجمالي الموظفين</div>
+                        <div id="counterTotal" class="text-2xl font-black text-slate-900 dark:text-white">0</div>
                     </div>
-                    <div class="bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800/40 rounded-xl p-3.5 text-center">
-                        <div class="text-xs text-emerald-700 dark:text-emerald-400 font-semibold mb-1">تم الإرسال</div>
+                    <div class="bg-gradient-to-b from-emerald-50/80 to-white dark:from-emerald-950/30 dark:to-zinc-900/60 border border-emerald-200/80 dark:border-emerald-900/40 rounded-2xl p-3.5 text-center transition hover:shadow-md">
+                        <div class="w-8 h-8 rounded-xl bg-emerald-100 dark:bg-emerald-900/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xs mx-auto mb-1.5 shadow-xs">
+                            <i class="fas fa-circle-check"></i>
+                        </div>
+                        <div class="text-[11px] text-emerald-700 dark:text-emerald-400 font-bold mb-0.5">تم الإرسال</div>
                         <div id="counterSent" class="text-2xl font-black text-emerald-700 dark:text-emerald-400">0</div>
                     </div>
-                    <div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/40 rounded-xl p-3.5 text-center">
-                        <div class="text-xs text-amber-700 dark:text-amber-400 font-semibold mb-1">قيد الانتظار</div>
+                    <div class="bg-gradient-to-b from-amber-50/80 to-white dark:from-amber-950/30 dark:to-zinc-900/60 border border-amber-200/80 dark:border-amber-900/40 rounded-2xl p-3.5 text-center transition hover:shadow-md">
+                        <div class="w-8 h-8 rounded-xl bg-amber-100 dark:bg-amber-900/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-xs mx-auto mb-1.5 shadow-xs">
+                            <i class="fas fa-hourglass-half"></i>
+                        </div>
+                        <div class="text-[11px] text-amber-700 dark:text-amber-400 font-bold mb-0.5">قيد الانتظار</div>
                         <div id="counterPending" class="text-2xl font-black text-amber-700 dark:text-amber-400">0</div>
                     </div>
-                    <div class="bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-800/40 rounded-xl p-3.5 text-center">
-                        <div class="text-xs text-rose-700 dark:text-rose-400 font-semibold mb-1">فشل الإرسال</div>
+                    <div class="bg-gradient-to-b from-rose-50/80 to-white dark:from-rose-950/30 dark:to-zinc-900/60 border border-rose-200/80 dark:border-rose-900/40 rounded-2xl p-3.5 text-center transition hover:shadow-md">
+                        <div class="w-8 h-8 rounded-xl bg-rose-100 dark:bg-rose-900/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-xs mx-auto mb-1.5 shadow-xs">
+                            <i class="fas fa-triangle-exclamation"></i>
+                        </div>
+                        <div class="text-[11px] text-rose-700 dark:text-rose-400 font-bold mb-0.5">فشل الإرسال</div>
                         <div id="counterFailed" class="text-2xl font-black text-rose-700 dark:text-rose-400">0</div>
                     </div>
                 </div>
@@ -264,11 +283,11 @@
 
 
         <!-- 2. Main Payroll Data Grid -->
-        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#18181b]/80 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
+        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#141418] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-md bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">2</span>
+                        <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">2</span>
                         بيانات المرتبات
                         <span id="gridCount" class="text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800 mr-2"></span>
                     </h2>
@@ -277,7 +296,7 @@
 
                 <div class="flex items-center gap-2 flex-wrap">
                     <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" class="hidden">
-                    <button type="button" id="btnUploadTrigger" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/50 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800 rounded-xl text-xs font-bold transition">
+                    <button type="button" id="btnUploadTrigger" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800/80 rounded-xl text-xs font-bold transition">
                         <i class="fas fa-file-excel text-emerald-600 dark:text-emerald-400"></i> رفع ملف Excel / CSV
                     </button>
                     <button type="button" id="gridAddRowBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs font-bold transition">
@@ -286,7 +305,7 @@
                     <button type="button" id="gridAddColBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-slate-50 dark:bg-zinc-800 hover:bg-slate-100 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 border border-slate-300 dark:border-zinc-700 rounded-xl text-xs font-bold transition">
                         <i class="fas fa-columns"></i> إضافة عمود
                     </button>
-                    <button type="button" id="gridClearBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 dark:bg-rose-950/50 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-bold transition">
+                    <button type="button" id="gridClearBtn" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 rounded-xl text-xs font-bold transition">
                         <i class="fas fa-trash-can"></i> مسح الجدول
                     </button>
                 </div>
@@ -327,11 +346,11 @@
         <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
             
             <!-- Message Settings Editor (7 Cols) -->
-            <div class="lg:col-span-7 dashboard-card p-5 sm:p-6 bg-white dark:bg-[#18181b]/80 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
+            <div class="lg:col-span-7 dashboard-card p-5 sm:p-6 bg-white dark:bg-[#141418] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
                 <div class="flex items-center justify-between">
                     <div>
                         <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                            <span class="w-6 h-6 rounded-md bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">3</span>
+                            <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">3</span>
                             إعدادات نص الرسالة
                         </h2>
                         <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">خصص صيغة الرسالة التي ستصل لكل موظف عبر واتساب.</p>
@@ -344,8 +363,6 @@
                     <input type="text" id="salaryMonth" value="مرتب شهر أكتوبر 2026" placeholder="مثال: مرتب شهر أكتوبر 2026 / مكافأة" class="w-full bg-white dark:bg-zinc-950 border border-slate-300 dark:border-zinc-700 rounded-xl px-3 py-2 text-xs font-semibold text-slate-900 dark:text-white focus:ring-2 focus:ring-emerald-500 focus:outline-none">
                 </div>
 
-
-
                 <!-- Message Template Textarea -->
                 <div>
                     <textarea id="messageTemplate" rows="10" class="w-full bg-slate-50 dark:bg-zinc-950/90 border border-slate-300 dark:border-zinc-800 rounded-2xl p-3 text-xs font-mono leading-relaxed text-slate-900 dark:text-zinc-100 focus:bg-white dark:focus:bg-zinc-950 focus:ring-2 focus:ring-emerald-500 focus:outline-none"></textarea>
@@ -353,7 +370,7 @@
             </div>
 
             <!-- Live Phone Preview Mockup (5 Cols) -->
-            <div class="lg:col-span-5 dashboard-card p-5 sm:p-6 bg-white dark:bg-[#18181b]/80 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
+            <div class="lg:col-span-5 dashboard-card p-5 sm:p-6 bg-white dark:bg-[#141418] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
                 <div class="flex items-center justify-between border-b border-slate-100 dark:border-zinc-800 pb-3">
                     <div class="flex items-center gap-2">
                         <i class="fab fa-whatsapp text-emerald-600 dark:text-emerald-400 text-lg"></i>
@@ -398,11 +415,11 @@
         </section>
 
         <!-- 4. Sending Controls -->
-        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#18181b]/80 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
+        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#141418] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-md bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">4</span>
+                        <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">4</span>
                         التحكم في الإرسال
                     </h2>
                     <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">اضبط الفاصل الزمني بين الرسائل ثم ابدأ الإرسال التلقائي.</p>
@@ -420,17 +437,17 @@
 
             <!-- Action Buttons Toolbar -->
             <div class="flex flex-wrap items-center gap-2.5 pt-2">
-                <button type="button" id="startDispatchBtn" class="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/20 transition active:scale-95">
-                    <i class="fas fa-paper-plane text-sm"></i> بدء الإرسال
+                <button type="button" id="startDispatchBtn" class="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-600/25 transition active:scale-95">
+                    <i class="fas fa-paper-plane text-xs"></i> بدء الإرسال
                 </button>
                 <button type="button" id="pauseDispatchBtn" class="hidden inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition active:scale-95">
-                    <i class="fas fa-pause"></i> إيقاف مؤقت
+                    <i class="fas fa-pause text-xs"></i> إيقاف مؤقت
                 </button>
                 <button type="button" id="skipDispatchBtn" class="hidden inline-flex items-center gap-2 px-4 py-2.5 bg-slate-200 dark:bg-zinc-800 hover:bg-slate-300 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 rounded-xl text-xs font-bold transition active:scale-95">
-                    <i class="fas fa-forward"></i> تخطي الموظف الحالي
+                    <i class="fas fa-forward text-xs"></i> تخطي الموظف الحالي
                 </button>
                 <button type="button" id="stopDispatchBtn" class="hidden inline-flex items-center gap-2 px-4 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition active:scale-95">
-                    <i class="fas fa-stop"></i> إنهاء الإرسال
+                    <i class="fas fa-stop text-xs"></i> إنهاء الإرسال
                 </button>
             </div>
 
@@ -451,11 +468,11 @@
         </section>
 
         <!-- 5. Employee Sending Results Table -->
-        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#18181b]/80 border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
+        <section class="dashboard-card p-5 sm:p-6 bg-white dark:bg-[#141418] border border-slate-200 dark:border-white/10 rounded-2xl shadow-sm space-y-4">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
                     <h2 class="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <span class="w-6 h-6 rounded-md bg-emerald-600 text-white font-bold flex items-center justify-center text-xs">5</span>
+                        <span class="w-6 h-6 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 text-white font-bold flex items-center justify-center text-xs shadow-xs">5</span>
                         نتائج وحالة الإرسال
                     </h2>
                     <p class="text-xs text-slate-500 dark:text-zinc-400 mt-0.5">متابعة حالة كل موظف مع إمكانية التعديل الفردي أو تصدير تقرير الإكسيل.</p>
@@ -578,6 +595,6 @@
     </footer>
 
     <!-- App JS -->
-    <script src="/static/js/app.js?v=32"></script>
+    <script src="{{ url_for('static', path='js/app.js') }}?v=35"></script>
 </body>
 </html>

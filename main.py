@@ -3,7 +3,14 @@ import urllib.parse
 import os
 import re
 import sys
+import mimetypes
 from typing import List, Optional
+
+# Register font MIME types so StaticFiles serves them with proper headers
+mimetypes.add_type("font/woff2", ".woff2")
+mimetypes.add_type("font/otf", ".otf")
+mimetypes.add_type("font/woff", ".woff")
+mimetypes.add_type("application/font-woff2", ".woff2")
 
 # Ensure UTF-8 output encoding on Windows consoles
 if sys.platform.startswith('win'):
@@ -52,9 +59,18 @@ os.makedirs(os.path.join(STATIC_DIR, "js"), exist_ok=True)
 os.makedirs(TEMPLATES_DIR, exist_ok=True)
 
 @app.middleware("http")
-async def no_cache(request, call_next):
+async def cache_control_middleware(request: Request, call_next):
     resp = await call_next(request)
-    resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    path = request.url.path
+    if path.startswith("/static/fonts/") or path.startswith("/static/webfonts/"):
+        # Cache local fonts and webfonts permanently to prevent any FOUT / icon / font disappearance on reload
+        resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
+    elif path.startswith("/static/"):
+        # Static CSS and JS assets: cache with short revalidation, versioned via ?v= query
+        resp.headers["Cache-Control"] = "public, max-age=3600, must-revalidate"
+    else:
+        # Dynamic HTML and API responses: do not cache
+        resp.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     return resp
 
 
@@ -66,11 +82,16 @@ async def version():
     return {"version": APP_VERSION}
 
 
+@app.get("/favicon.ico", include_in_schema=False)
+async def favicon():
+    return Response(status_code=204)
+
+
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 templates = Jinja2Templates(directory=TEMPLATES_DIR)
 
 PUBLIC_PREFIXES = ("/static/", "/api/auth/")
-PUBLIC_PATHS = {"/", "/api/version"}
+PUBLIC_PATHS = {"/", "/api/version", "/favicon.ico"}
 
 
 @app.middleware("http")

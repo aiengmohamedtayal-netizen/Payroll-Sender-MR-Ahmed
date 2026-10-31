@@ -92,33 +92,86 @@ const DEFAULT_TEMPLATE = `أهلاً بك أ/ {الاسم} 🌹
 مع تحيات إدارة الموارد البشرية والمالية`;
 
 // ---------------------------------------------------------------------------
-// Initialization
+// Initialization & State Restoration
 // ---------------------------------------------------------------------------
+let appInitialized = false;
+let listenersAttached = false;
+
 document.addEventListener('DOMContentLoaded', () => {
+    if (appInitialized) return;
+    appInitialized = true;
+
     initElements();
     initSheetGrid();
     setupEventListeners();
     pollWaStatus(2500);
+    restoreCampaignStateFromBackend();
 });
 
 function initElements() {
     updateThemeIcon(document.documentElement.classList.contains('dark'));
+
+    // Check previously cached WhatsApp login state to avoid red badge flash on reload
+    try {
+        if (localStorage.getItem('payroll_wa_logged_in') === '1') {
+            renderWaBadge({ state: 'CONNECTED', logged_in: true });
+        }
+    } catch (e) {}
+
     const templateInput = document.getElementById('messageTemplate');
-    if (templateInput && !templateInput.value.trim()) {
-        templateInput.value = DEFAULT_TEMPLATE;
+    if (templateInput) {
+        const savedTemplate = localStorage.getItem('payroll_message_template');
+        if (savedTemplate && savedTemplate.trim()) {
+            templateInput.value = savedTemplate;
+        } else if (!templateInput.value.trim()) {
+            templateInput.value = DEFAULT_TEMPLATE;
+        }
+        templateInput.addEventListener('input', () => {
+            try { localStorage.setItem('payroll_message_template', templateInput.value); } catch (e) {}
+            updateTemplatePreview();
+        });
     }
 
     const monthInput = document.getElementById('salaryMonth');
-    if (monthInput && !monthInput.value.trim()) {
-        const today = new Date();
-        const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
-        monthInput.value = `مرتب شهر ${months[today.getMonth()]} ${today.getFullYear()}`;
+    if (monthInput) {
+        const savedMonth = localStorage.getItem('payroll_salary_month');
+        if (savedMonth && savedMonth.trim()) {
+            monthInput.value = savedMonth;
+        } else if (!monthInput.value.trim()) {
+            const today = new Date();
+            const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+            monthInput.value = `مرتب شهر ${months[today.getMonth()]} ${today.getFullYear()}`;
+        }
+        monthInput.addEventListener('input', () => {
+            try { localStorage.setItem('payroll_salary_month', monthInput.value); } catch (e) {}
+            updateTemplatePreview();
+        });
+    }
+
+    const minDelay = document.getElementById('minDelaySec');
+    const maxDelay = document.getElementById('maxDelaySec');
+    if (minDelay) {
+        const savedMin = localStorage.getItem('payroll_min_delay');
+        if (savedMin) minDelay.value = savedMin;
+        minDelay.addEventListener('change', () => {
+            try { localStorage.setItem('payroll_min_delay', minDelay.value); } catch (e) {}
+        });
+    }
+    if (maxDelay) {
+        const savedMax = localStorage.getItem('payroll_max_delay');
+        if (savedMax) maxDelay.value = savedMax;
+        maxDelay.addEventListener('change', () => {
+            try { localStorage.setItem('payroll_max_delay', maxDelay.value); } catch (e) {}
+        });
     }
 
     updateTemplatePreview();
 }
 
 function setupEventListeners() {
+    if (listenersAttached) return;
+    listenersAttached = true;
+
     // File upload button trigger
     const fileInput = document.getElementById('excelFileInput');
     const uploadBtn = document.getElementById('btnUploadTrigger');
@@ -133,11 +186,7 @@ function setupEventListeners() {
     }
 
     // Template live updates
-    const templateInput = document.getElementById('messageTemplate');
-    const salaryMonth = document.getElementById('salaryMonth');
     const previewSelect = document.getElementById('previewEmpSelect');
-    if (templateInput) templateInput.addEventListener('input', updateTemplatePreview);
-    if (salaryMonth) salaryMonth.addEventListener('input', updateTemplatePreview);
     if (previewSelect) previewSelect.addEventListener('change', updateTemplatePreview);
 
     // Tag chip buttons
@@ -382,6 +431,7 @@ function renderWaBadge(st) {
     const state = st.state || (st.logged_in ? 'CONNECTED' : (st.connecting ? 'STARTING' : 'DISCONNECTED'));
 
     if (state === 'CONNECTED' || st.logged_in) {
+        try { localStorage.setItem('payroll_wa_logged_in', '1'); } catch (e) {}
         badge.className = base + 'bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800';
         badge.innerHTML = '<i class="fas fa-check-circle text-emerald-600 dark:text-emerald-400 ml-1"></i> متصل' + (st.number ? ' (+' + st.number + ')' : '');
         if (connectBtn) connectBtn.classList.add('hidden');
@@ -457,6 +507,7 @@ function renderWaBadge(st) {
         if (disconnectBtn) disconnectBtn.classList.add('hidden');
         if (connectBox) connectBox.classList.add('hidden');
     } else {
+        try { localStorage.removeItem('payroll_wa_logged_in'); } catch (e) {}
         badge.className = base + 'bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-400 border-rose-200 dark:border-rose-800';
         badge.innerHTML = '<i class="fas fa-circle-xmark ml-1"></i> غير متصل';
         if (connectBtn) {
@@ -487,6 +538,56 @@ function pollWaStatus(intervalMs = 2500) {
     waPoller = setInterval(tick, intervalMs);
 }
 
+async function restoreCampaignStateFromBackend() {
+    try {
+        const res = await fetch('/api/campaign/status');
+        if (!res.ok) return;
+        const st = await res.json();
+
+        if (st.running) {
+            isDispatching = true;
+            isPaused = !!st.paused;
+
+            document.getElementById('startDispatchBtn')?.classList.add('hidden');
+            document.getElementById('pauseDispatchBtn')?.classList.remove('hidden');
+            document.getElementById('stopDispatchBtn')?.classList.remove('hidden');
+            document.getElementById('skipDispatchBtn')?.classList.remove('hidden');
+            document.getElementById('campaignActiveBanner')?.classList.remove('hidden');
+
+            const pauseBtn = document.getElementById('pauseDispatchBtn');
+            if (pauseBtn) {
+                pauseBtn.innerHTML = isPaused
+                    ? '<i class="fas fa-play"></i> استئناف'
+                    : '<i class="fas fa-pause"></i> إيقاف مؤقت';
+            }
+
+            clearInterval(statusPoller);
+            statusPoller = setInterval(pollCampaignStatus, 1000);
+            pollCampaignStatus();
+        } else if (st.results && Object.keys(st.results).length > 0) {
+            Object.entries(st.results).forEach(([id, r]) => {
+                const emp = employeeQueue.find(e => e.id === Number(id));
+                if (!emp) return;
+                if (r.status === 'sent') {
+                    emp.status = 'sent';
+                    emp.statusText = 'تم الإرسال بنجاح';
+                    emp.sentAt = r.sent_at || '';
+                    emp.errorDetail = '';
+                } else if (r.status === 'failed') {
+                    emp.status = 'failed';
+                    emp.statusText = 'فشل: ' + (r.detail || 'تعذر الإرسال');
+                    emp.errorDetail = r.detail || '';
+                } else if (r.status === 'skipped') {
+                    emp.status = 'failed';
+                    emp.statusText = 'تم التخطي يدوياً';
+                }
+                updateEmployeeRowStatus(emp);
+            });
+            updateCounters();
+        }
+    } catch (e) {}
+}
+
 // ---------------------------------------------------------------------------
 // 2. Main Payroll Data Grid (Sheet)
 // ---------------------------------------------------------------------------
@@ -499,11 +600,11 @@ function gridAddRow(vals = []) {
     if (!tbody) return;
     const n = tbody.rows.length;
     const tr = tbody.insertRow();
-    tr.className = 'hover:bg-slate-50 transition border-b border-slate-200';
+    tr.className = 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 transition border-b border-slate-200 dark:border-zinc-800';
 
     // # Number cell
     const num = tr.insertCell();
-    num.className = 'border border-slate-200 bg-slate-50 text-center text-slate-500 font-mono px-2 py-1.5';
+    num.className = 'sheet-num-cell px-2 py-1.5';
     num.textContent = n + 1;
 
     // Data cells
@@ -511,7 +612,7 @@ function gridAddRow(vals = []) {
         const td = tr.insertCell();
         td.contentEditable = 'true';
         td.dataset.c = c;
-        td.className = 'sheet-cell text-slate-800';
+        td.className = 'sheet-cell';
         if (vals[c] !== undefined && vals[c] !== null) {
             td.textContent = String(vals[c]);
         }
@@ -519,8 +620,8 @@ function gridAddRow(vals = []) {
 
     // Delete Row button cell
     const delCell = tr.insertCell();
-    delCell.className = 'border border-slate-200 text-center px-1 py-1.5';
-    delCell.innerHTML = `<button type="button" onclick="gridDeleteRow(this)" class="text-slate-400 hover:text-rose-600 transition text-xs" title="حذف هذا الصف"><i class="fas fa-trash-can"></i></button>`;
+    delCell.className = 'sheet-del-cell';
+    delCell.innerHTML = `<button type="button" onclick="gridDeleteRow(this)" class="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:text-rose-400 dark:hover:bg-rose-950/40 transition text-xs" title="حذف هذا الصف"><i class="fas fa-trash-can text-xs"></i></button>`;
 }
 
 function gridEnsureRows(count) {
@@ -870,13 +971,65 @@ function syncFromGrid(fromPaste = false) {
     updatePreviewDropdown();
     renderResultsTable();
     updateTemplatePreview();
+    persistStateToStorage(rows, extras);
 }
 
+function persistStateToStorage(rows, extras) {
+    try {
+        const toSave = rows || readGridRows();
+        const extraNames = extras || extraColNames();
+        localStorage.setItem('payroll_grid_rows', JSON.stringify(toSave));
+        localStorage.setItem('payroll_extra_cols', JSON.stringify(extraNames));
+
+        const customMap = {};
+        employeeQueue.forEach(e => {
+            if (e.customMessage) customMap[e.name + '|' + e.phone] = e.customMessage;
+        });
+        localStorage.setItem('payroll_custom_messages', JSON.stringify(customMap));
+    } catch (e) {}
+}
+
+function restoreGridFromStorage() {
+    const tbody = document.getElementById('sheetGridBody');
+    if (!tbody) return false;
+
+    try {
+        const savedExtras = JSON.parse(localStorage.getItem('payroll_extra_cols') || '[]');
+        if (Array.isArray(savedExtras)) {
+            savedExtras.forEach(name => {
+                if (name && !GRID_COLS.includes(name)) {
+                    addExtraColumn(name, false);
+                }
+            });
+        }
+
+        const savedRows = JSON.parse(localStorage.getItem('payroll_grid_rows') || '[]');
+        if (Array.isArray(savedRows) && savedRows.length > 0) {
+            tbody.innerHTML = '';
+            savedRows.forEach(rowObj => {
+                const vals = GRID_COLS.map(col => rowObj[col] ?? '');
+                gridAddRow(vals);
+            });
+            gridEnsureRows(Math.max(15, savedRows.length));
+            syncFromGrid(false);
+            return true;
+        }
+    } catch (e) {
+        console.warn('Could not restore grid from localStorage:', e);
+    }
+    gridEnsureRows(15);
+    return false;
+}
+
+let gridEventsAttached = false;
 function initSheetGrid() {
     const tbody = document.getElementById('sheetGridBody');
     if (!tbody) return;
 
-    gridEnsureRows(15);
+    restoreGridFromStorage();
+
+    if (gridEventsAttached) return;
+    gridEventsAttached = true;
 
     // Paste handling directly in table
     tbody.addEventListener('paste', (e) => {
@@ -908,6 +1061,7 @@ function initSheetGrid() {
     // Toolbar buttons
     document.getElementById('gridAddRowBtn')?.addEventListener('click', () => {
         gridAddRow();
+        persistStateToStorage();
     });
 
     document.getElementById('gridAddColBtn')?.addEventListener('click', () => {
@@ -921,6 +1075,11 @@ function initSheetGrid() {
             return;
         }
         if (!confirm('هل تريد مسح جميع البيانات من الجدول؟')) return;
+        try {
+            localStorage.removeItem('payroll_grid_rows');
+            localStorage.removeItem('payroll_extra_cols');
+            localStorage.removeItem('payroll_custom_messages');
+        } catch (e) {}
         tbody.innerHTML = '';
         gridEnsureRows(15);
         syncFromGrid(false);
@@ -1133,7 +1292,7 @@ function renderResultsTable() {
     if (!employeeQueue.length) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="6" class="px-4 py-8 text-center text-slate-400">
+                <td colspan="6" class="px-4 py-8 text-center text-slate-400 dark:text-zinc-500">
                     لا توجد بيانات موظفين حالياً. الصق أو ارفع بيانات المرتبات في الجدول أعلاه للبدء.
                 </td>
             </tr>
@@ -1145,7 +1304,7 @@ function renderResultsTable() {
     employeeQueue.forEach((emp, idx) => {
         const tr = document.createElement('tr');
         tr.id = `row-emp-${emp.id}`;
-        tr.className = 'hover:bg-slate-50 transition border-b border-slate-100 text-xs';
+        tr.className = 'hover:bg-slate-50 dark:hover:bg-zinc-800/40 transition border-b border-slate-100 dark:border-zinc-800/80 text-xs';
 
         let badgeClass = 'badge-pending';
         if (emp.status === 'sent') badgeClass = 'badge-sent';
@@ -1153,26 +1312,26 @@ function renderResultsTable() {
         if (emp.status === 'failed' || emp.status === 'invalid_phone') badgeClass = 'badge-failed';
 
         tr.innerHTML = `
-            <td class="px-3.5 py-3 text-center text-slate-500 font-mono">${idx + 1}</td>
-            <td class="px-3.5 py-3 font-bold text-slate-800">${escapeHtml(emp.name)}</td>
-            <td class="px-3.5 py-3 font-mono text-slate-600 dir-ltr text-right">
-                ${emp.phoneValid ? `<span class="text-emerald-700">${emp.phoneFormatted}</span>` : `<span class="text-rose-500 line-through">${escapeHtml(emp.rawPhone)}</span>`}
+            <td class="px-3.5 py-3 text-center text-slate-500 dark:text-zinc-400 font-mono">${idx + 1}</td>
+            <td class="px-3.5 py-3 font-bold text-slate-800 dark:text-zinc-100">${escapeHtml(emp.name)}</td>
+            <td class="px-3.5 py-3 font-mono text-slate-600 dark:text-zinc-300 dir-ltr text-right">
+                ${emp.phoneValid ? `<span class="text-emerald-700 dark:text-emerald-400 font-semibold">${emp.phoneFormatted}</span>` : `<span class="text-rose-500 line-through">${escapeHtml(emp.rawPhone)}</span>`}
             </td>
-            <td class="px-3.5 py-3 font-bold text-emerald-700">${emp.net} ج.م</td>
+            <td class="px-3.5 py-3 font-bold text-emerald-700 dark:text-emerald-400">${emp.net} ج.م</td>
             <td class="px-3.5 py-3">
                 <span id="badge-emp-${emp.id}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${badgeClass}">
                     ${emp.statusText}
                 </span>
             </td>
             <td class="px-3.5 py-3 text-center whitespace-nowrap">
-                <button type="button" onclick="openMessageEditor(${emp.id})" class="inline-flex items-center gap-1 px-2.5 py-1 ${emp.customMessage ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-600 hover:bg-slate-700'} text-white rounded-lg transition ml-1" title="تعديل نص الرسالة لهذا الموظف">
-                    <i class="fas fa-pen"></i> ${emp.customMessage ? 'معدّلة' : 'تعديل'}
+                <button type="button" onclick="openMessageEditor(${emp.id})" class="inline-flex items-center gap-1 px-2.5 py-1 ${emp.customMessage ? 'bg-amber-500 hover:bg-amber-600' : 'bg-slate-600 dark:bg-zinc-700 hover:bg-slate-700 dark:hover:bg-zinc-600'} text-white rounded-lg transition ml-1 shadow-xs" title="تعديل نص الرسالة لهذا الموظف">
+                    <i class="fas fa-pen text-[10px]"></i> ${emp.customMessage ? 'معدّلة' : 'تعديل'}
                 </button>
-                <button type="button" onclick="sendSingleDirect(${emp.id})" class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition ml-1" title="إرسال مباشر لهذا الموظف">
-                    <i class="fab fa-whatsapp"></i> إرسال
+                <button type="button" onclick="sendSingleDirect(${emp.id})" class="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition ml-1 shadow-xs" title="إرسال مباشر لهذا الموظف">
+                    <i class="fab fa-whatsapp text-xs"></i> إرسال
                 </button>
-                <button type="button" onclick="openDetailsModal(${emp.id})" class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition" title="عرض تفاصيل الموظف">
-                    <i class="fas fa-eye"></i> التفاصيل
+                <button type="button" onclick="openDetailsModal(${emp.id})" class="inline-flex items-center gap-1 px-2.5 py-1 bg-slate-100 hover:bg-slate-200 dark:bg-zinc-800 dark:hover:bg-zinc-700 text-slate-700 dark:text-zinc-200 rounded-lg transition border border-slate-200 dark:border-zinc-700" title="عرض تفاصيل الموظف">
+                    <i class="fas fa-eye text-[10px]"></i> التفاصيل
                 </button>
             </td>
         `;
@@ -1187,16 +1346,16 @@ function updateEmployeeRowStatus(emp) {
     badge.className = 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold';
     if (emp.status === 'sent') {
         badge.classList.add('badge-sent');
-        badge.innerHTML = `<i class="fas fa-check-circle ml-1"></i> تم (${emp.sentAt || ''})`;
+        badge.innerHTML = `<i class="fas fa-circle-check ml-1 text-xs"></i> تم (${emp.sentAt || ''})`;
     } else if (emp.status === 'sending') {
         badge.classList.add('badge-sending');
-        badge.innerHTML = `<i class="fas fa-spinner fa-spin ml-1"></i> جاري الإرسال...`;
+        badge.innerHTML = `<i class="fas fa-spinner fa-spin ml-1 text-xs"></i> جاري الإرسال...`;
     } else if (emp.status === 'failed' || emp.status === 'invalid_phone') {
         badge.classList.add('badge-failed');
-        badge.innerHTML = `<i class="fas fa-circle-xmark ml-1"></i> ${escapeHtml(emp.statusText)}`;
+        badge.innerHTML = `<i class="fas fa-triangle-exclamation ml-1 text-xs"></i> ${escapeHtml(emp.statusText)}`;
     } else {
         badge.classList.add('badge-pending');
-        badge.textContent = 'قيد الانتظار';
+        badge.innerHTML = `<i class="fas fa-clock ml-1 text-xs"></i> قيد الانتظار`;
     }
 }
 
@@ -1452,6 +1611,7 @@ window.saveEditedMessage = function() {
         return;
     }
     emp.customMessage = text;
+    persistStateToStorage();
     closeMessageEditor();
     renderResultsTable();
     updateTemplatePreview();
@@ -1461,6 +1621,7 @@ window.resetEditedMessage = function() {
     const emp = employeeQueue.find(e => e.id === editingEmpId);
     if (!emp) return;
     emp.customMessage = '';
+    persistStateToStorage();
     const textarea = document.getElementById('editMsgTextarea');
     if (textarea) textarea.value = formatEmployeeMessage(emp);
     renderResultsTable();
