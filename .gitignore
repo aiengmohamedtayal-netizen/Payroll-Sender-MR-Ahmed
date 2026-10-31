@@ -6,10 +6,9 @@ venv/
 env/
 
 # Secrets and environment configs
-.env
-.env.*
+!.env
 !.env.example
-email_config.json
+!email_config.json
 email_config.local.json
 *.pem
 *.key

@@ -1,0 +1,11 @@
+{
+  "host": "smtp.gmail.com",
+  "port": 587,
+  "username": "mota200615@gmail.com",
+  "password": "flwo ffoj zaqw pbxk",
+  "from_name": "مرسل رواتب واتساب",
+  "from_address": "",
+  "use_tls": true,
+  "use_ssl": false,
+  "timeout": 20
+}
