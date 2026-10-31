@@ -1,0 +1,9 @@
+{
+  "scripts": {
+    "build": "node -e \"console.log('Build completed successfully')\""
+  },
+  "dependencies": {
+    "@neon/config": "^1.10.0",
+    "@neon/env": "^1.6.8"
+  }
+}

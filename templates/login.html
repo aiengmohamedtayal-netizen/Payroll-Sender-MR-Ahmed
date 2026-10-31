@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول | مرسل رواتب واتساب</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Thmanyah', 'system-ui', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/style.css?v=32">
+    <style>
+        body { background: #f8fafc; }
+        .field { width: 100%; background: #fff; border: 1.5px solid #cbd5e1; border-radius: .75rem; padding: .75rem 1rem; font-size: .9rem; font-weight: 600; transition: border-color .15s, box-shadow .15s; }
+        .field:focus { outline: none; border-color: #059669; box-shadow: 0 0 0 4px rgba(16,185,129,.15); }
+        .field[aria-invalid="true"] { border-color: #e11d48; }
+        .tab-btn { flex: 1; padding: .6rem 0; font-weight: 800; font-size: .9rem; color: #64748b; border-bottom: 3px solid transparent; transition: color .15s, border-color .15s; }
+        .tab-btn[aria-selected="true"] { color: #047857; border-color: #059669; }
+        .tab-btn:focus-visible, .btn:focus-visible, .link-btn:focus-visible { outline: 3px solid rgba(16,185,129,.45); outline-offset: 2px; }
+        .btn { width: 100%; padding: .8rem 1rem; border-radius: .75rem; font-weight: 800; font-size: .95rem; color: #fff; background: #059669; transition: background .15s, transform .15s; }
+        .btn:hover:not(:disabled) { background: #047857; }
+        .btn:disabled { opacity: .6; cursor: not-allowed; }
+        .link-btn { color: #047857; font-weight: 700; font-size: .8rem; text-decoration: underline; text-underline-offset: 3px; }
+        .link-btn:disabled { color: #94a3b8; text-decoration: none; cursor: not-allowed; }
+        .code-input { letter-spacing: .7em; text-align: center; font-size: 1.6rem; font-weight: 800; direction: ltr; padding-inline-start: .7em; }
+        .bubble { background: #fff; border-radius: 10px 10px 10px 2px; box-shadow: 0 1px 2px rgba(0,0,0,.18); }
+        @keyframes bubble-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+        .bubble-in { animation: bubble-in .6s ease-out .15s both; }
+        @media (prefers-reduced-motion: reduce) { .bubble-in { animation: none; } }
+    </style>
+</head>
+<body class="min-h-screen">
+<div class="min-h-screen grid lg:grid-cols-2">
+
+    <!-- Form side -->
+    <main class="flex items-center justify-center px-5 py-10 order-2 lg:order-1">
+        <div class="w-full max-w-md">
+            <div class="flex items-center gap-3 mb-10">
+                <div class="w-11 h-11 rounded-xl bg-emerald-600 flex items-center justify-center text-white">
+                    <i class="fab fa-whatsapp text-2xl"></i>
+                </div>
+                <div class="font-black text-lg text-slate-900 leading-tight">مرسل رواتب واتساب</div>
+            </div>
+
+            {% if not email_ready %}
+            <div class="mb-5 rounded-xl border border-rose-300 bg-rose-50 p-3.5 text-xs font-semibold text-rose-900 leading-relaxed shadow-sm">
+                <div class="flex items-start gap-2">
+                    <i class="fas fa-triangle-exclamation text-rose-600 mt-0.5 text-sm"></i>
+                    <div>
+                        <strong class="block mb-1 text-rose-800">إعدادات البريد الإلكتروني غير مكتملة:</strong>
+                        {{ email_message }}
+                        <div class="mt-2 text-[11px] text-rose-700">
+                            قم بنسخ ملف <span dir="ltr" class="font-mono bg-white px-1.5 py-0.5 rounded border border-rose-200">email_config.example.json</span> إلى <span dir="ltr" class="font-mono bg-white px-1.5 py-0.5 rounded border border-rose-200">email_config.json</span> واضبط كلمة مرور التطبيقات (App Password).
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% elif is_dev %}
+            <div class="mb-5 rounded-xl border border-sky-300 bg-sky-50 p-3 text-xs font-semibold text-sky-900 leading-relaxed shadow-sm">
+                <i class="fas fa-flask text-sky-600 ml-1"></i>
+                <strong>وضع التطوير المحلي (Dev Mode):</strong> مفعل. سيتم إرسال كود التفعيل أو محاكاته وطباعته في شاشة الأوامر.
+            </div>
+            {% endif %}
+
+            <!-- Step: login / register -->
+            <section id="authStep">
+                <div class="mb-7">
+                    <h1 class="text-3xl font-black text-slate-900 mb-2">مرحباً بك</h1>
+                    <p class="text-sm text-slate-500">سجّل دخولك لمتابعة وإدارة الرواتب بسهولة.</p>
+                </div>
+                <div role="tablist" class="flex border-b border-slate-200 mb-6">
+                    <button role="tab" id="tabLogin" class="tab-btn" aria-selected="true" aria-controls="loginForm">تسجيل الدخول</button>
+                    <button role="tab" id="tabRegister" class="tab-btn" aria-selected="false" aria-controls="registerForm">إنشاء حساب</button>
+                </div>
+
+                <form id="loginForm" class="space-y-4" novalidate>
+                    <div>
+                        <label for="loginEmail" class="block text-xs font-bold text-slate-600 mb-1.5">الإيميل</label>
+                        <input id="loginEmail" type="email" autocomplete="email" dir="ltr" class="field text-left" required>
+                    </div>
+                    <div>
+                        <label for="loginPassword" class="block text-xs font-bold text-slate-600 mb-1.5">كلمة السر</label>
+                        <div class="relative">
+                            <input id="loginPassword" type="password" autocomplete="current-password" dir="ltr" class="field text-left pr-3 pl-11" required>
+                            <button type="button" class="absolute inset-y-0 left-0 px-3.5 text-slate-500 hover:text-slate-800" data-toggle="loginPassword" aria-label="إظهار كلمة السر"><i class="fas fa-eye"></i></button>
+                        </div>
+                    </div>
+                    <p id="loginError" class="text-xs font-bold text-rose-600 min-h-[1rem]" role="alert" aria-live="polite"></p>
+                    <button type="submit" class="btn" id="loginBtn">دخول</button>
+                </form>
+
+                <form id="registerForm" class="space-y-4 hidden" novalidate>
+                    <div>
+                        <label for="regName" class="block text-xs font-bold text-slate-600 mb-1.5">الاسم</label>
+                        <input id="regName" type="text" autocomplete="name" class="field" required>
+                    </div>
+                    <div>
+                        <label for="regEmail" class="block text-xs font-bold text-slate-600 mb-1.5">الإيميل</label>
+                        <input id="regEmail" type="email" autocomplete="email" dir="ltr" class="field text-left" required>
+                        <p class="text-[11px] text-slate-500 mt-1">هنبعتلك كود تفعيل على الإيميل ده، لازم يكون إيميل شغّال.</p>
+                    </div>
+                    <div>
+                        <label for="regPassword" class="block text-xs font-bold text-slate-600 mb-1.5">كلمة السر</label>
+                        <div class="relative">
+                            <input id="regPassword" type="password" autocomplete="new-password" dir="ltr" class="field text-left pr-3 pl-11" required>
+                            <button type="button" class="absolute inset-y-0 left-0 px-3.5 text-slate-500 hover:text-slate-800" data-toggle="regPassword" aria-label="إظهار كلمة السر"><i class="fas fa-eye"></i></button>
+                        </div>
+                        <p id="pwHint" class="text-[11px] text-slate-500 mt-1">8 على الأقل، وفيها حروف وأرقام.</p>
+                    </div>
+                    <div>
+                        <label for="regPassword2" class="block text-xs font-bold text-slate-600 mb-1.5">تأكيد كلمة السر</label>
+                        <input id="regPassword2" type="password" autocomplete="new-password" dir="ltr" class="field text-left" required>
+                    </div>
+                    <p id="regError" class="text-xs font-bold text-rose-600 min-h-[1rem]" role="alert" aria-live="polite"></p>
+                    <button type="submit" class="btn" id="regBtn" {% if not email_ready %}disabled{% endif %}>إنشاء الحساب وإرسال الكود</button>
+                </form>
+            </section>
+
+            <!-- Step: verify code -->
+            <section id="verifyStep" class="hidden">
+                <h1 class="text-xl font-black text-slate-900 mb-1.5">أكّد الإيميل</h1>
+                <p class="text-sm text-slate-600 mb-4 leading-relaxed">بعتنا كود من 6 أرقام على <span id="verifyEmail" dir="ltr" class="font-bold text-slate-900"></span>. اكتبه هنا عشان يتفعّل الحساب.</p>
+                <div id="verifyAlert" class="mb-4 hidden text-xs font-bold p-3 rounded-xl border"></div>
+                <form id="verifyForm" class="space-y-4" novalidate>
+                    <label for="codeInput" class="sr-only">كود التفعيل</label>
+                    <input id="codeInput" class="field code-input" inputmode="numeric" autocomplete="one-time-code" maxlength="6" placeholder="······">
+                    <p id="verifyError" class="text-xs font-bold text-rose-600 min-h-[1rem]" role="alert" aria-live="polite"></p>
+                    <button type="submit" class="btn" id="verifyBtn">تفعيل الحساب</button>
+                </form>
+                <div class="flex items-center justify-between mt-5">
+                    <button type="button" id="resendBtn" class="link-btn" disabled>ابعت الكود تاني</button>
+                    <button type="button" id="backBtn" class="link-btn">تغيير الإيميل</button>
+                </div>
+                <p class="text-[11px] text-slate-500 mt-4">مش لاقي الرسالة؟ بص في مجلد الرسائل غير المرغوبة (Spam).</p>
+            </section>
+        </div>
+    </main>
+
+    <!-- Brand side -->
+    <aside class="hidden lg:flex order-1 lg:order-2 bg-emerald-950 text-white items-center justify-center p-12 relative overflow-hidden">
+        <div class="absolute -top-24 -right-20 w-72 h-72 rounded-full bg-emerald-700/20"></div>
+        <div class="absolute -bottom-32 -left-24 w-96 h-96 rounded-full bg-emerald-700/20"></div>
+        <div class="max-w-lg w-full relative z-10 space-y-9">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-900/40">
+                    <i class="fab fa-whatsapp text-3xl"></i>
+                </div>
+                <span class="text-xl font-black">مرسل رواتب واتساب</span>
+            </div>
+            <div>
+                <h2 class="text-4xl font-black leading-tight">رواتب موظفيك،<br><span class="text-emerald-400">بضغطة واحدة.</span></h2>
+                <p class="text-emerald-100/80 text-base mt-5 leading-relaxed">أرسل مفردات الرواتب عبر واتساب بسهولة وأمان.</p>
+            </div>
+            <div class="grid grid-cols-3 gap-3 text-center">
+                <div class="rounded-xl border border-emerald-800/80 bg-emerald-900/40 p-4">
+                    <i class="fas fa-shield-halved text-2xl text-emerald-400 mb-2"></i>
+                    <div class="font-bold text-sm">آمن</div><div class="text-xs text-emerald-100/65 mt-1">بيانات محمية</div>
+                </div>
+                <div class="rounded-xl border border-emerald-800/80 bg-emerald-900/40 p-4">
+                    <i class="fas fa-bolt text-2xl text-emerald-400 mb-2"></i>
+                    <div class="font-bold text-sm">سريع</div><div class="text-xs text-emerald-100/65 mt-1">إرسال منظم</div>
+                </div>
+                <div class="rounded-xl border border-emerald-800/80 bg-emerald-900/40 p-4">
+                    <i class="fas fa-users text-2xl text-emerald-400 mb-2"></i>
+                    <div class="font-bold text-sm">سهل</div><div class="text-xs text-emerald-100/65 mt-1">إدارة بسيطة</div>
+                </div>
+            </div>
+            <div class="bg-[#efeae2] rounded-2xl p-4 space-y-2.5 shadow-2xl max-w-md">
+                <div class="flex items-center gap-2 pb-2 border-b border-black/10 text-slate-700 text-xs font-bold">
+                    <i class="fab fa-whatsapp text-emerald-600"></i> مفردات مرتب
+                </div>
+                <div class="bubble bubble-in p-3 text-slate-800 text-[13px] leading-relaxed">
+                    <div class="font-extrabold mb-1">أهلاً أ/ مريم 👋</div>
+                    <div>مفردات مرتب شهر أكتوبر 2026</div>
+                    <div class="mt-1.5 grid grid-cols-2 gap-x-3 text-[12px]">
+                        <span class="text-slate-500">الإجمالي</span><span class="font-bold">9,500</span>
+                        <span class="text-slate-500">الاستقطاعات</span><span class="font-bold">500</span>
+                        <span class="text-slate-500">الصافي</span><span class="font-black text-emerald-700">9,000</span>
+                    </div>
+                </div>
+            </div>
+            <p class="text-xs text-emerald-100/50">حلول ذكية لإدارة الرواتب</p>
+        </div>
+    </aside>
+</div>
+
+<script>
+(() => {
+    const $ = id => document.getElementById(id);
+    let pendingEmail = '';
+    let resendTimer = null;
+
+    // ---------- Tabs ----------
+    function showTab(which) {
+        const login = which === 'login';
+        $('loginForm').classList.toggle('hidden', !login);
+        $('registerForm').classList.toggle('hidden', login);
+        $('tabLogin').setAttribute('aria-selected', login);
+        $('tabRegister').setAttribute('aria-selected', !login);
+        (login ? $('loginEmail') : $('regName')).focus();
+    }
+    $('tabLogin').onclick = () => showTab('login');
+    $('tabRegister').onclick = () => showTab('register');
+
+    // ---------- Show / hide password ----------
+    document.querySelectorAll('[data-toggle]').forEach(btn => {
+        btn.onclick = () => {
+            const inp = $(btn.dataset.toggle);
+            const show = inp.type === 'password';
+            inp.type = show ? 'text' : 'password';
+            btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+            btn.setAttribute('aria-label', show ? 'إخفاء كلمة السر' : 'إظهار كلمة السر');
+        };
+    });
+
+    // ---------- Helpers ----------
+    async function api(path, body) {
+        const res = await fetch(path, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body || {}),
+        });
+        let data = {};
+        try { data = await res.json(); } catch (_) {}
+        if (!res.ok) {
+            const err = new Error(data.detail?.message || data.detail || 'حصل خطأ، جرب تاني');
+            err.status = res.status;
+            err.extra = data.detail || {};
+            throw err;
+        }
+        return data;
+    }
+    function setBusy(btn, busy, label) {
+        btn.disabled = busy;
+        if (label) btn.textContent = busy ? 'استنى لحظة...' : label;
+    }
+    function startResendTimer(seconds) {
+        clearInterval(resendTimer);
+        const btn = $('resendBtn');
+        let left = seconds;
+        const tick = () => {
+            btn.disabled = left > 0;
+            btn.textContent = left > 0 ? `ابعت الكود تاني (${left})` : 'ابعت الكود تاني';
+            if (left-- <= 0) clearInterval(resendTimer);
+        };
+        tick();
+        resendTimer = setInterval(tick, 1000);
+    }
+    function goVerify(email, resendAfter, info) {
+        pendingEmail = email;
+        $('verifyEmail').textContent = email;
+        $('authStep').classList.add('hidden');
+        $('verifyStep').classList.remove('hidden');
+        $('verifyError').textContent = '';
+        $('codeInput').value = '';
+        $('codeInput').focus();
+        startResendTimer(resendAfter ?? 60);
+
+        const alertBox = $('verifyAlert');
+        if (alertBox) {
+            if (info && info.simulated && info.dev_code) {
+                alertBox.className = "mb-4 text-xs font-bold p-3 rounded-xl bg-amber-50 text-amber-900 border border-amber-300 leading-relaxed";
+                alertBox.innerHTML = `<i class="fas fa-flask text-amber-600 ml-1"></i> <strong>وضع التجربة:</strong> لم يتم إرسال إيميل حقيقي لعدم اكتمال الإعدادات. كود التفعيل للتجربة هو: <span class="text-base font-black font-mono text-emerald-700 bg-white px-2 py-0.5 rounded border border-amber-200">${info.dev_code}</span>`;
+                alertBox.classList.remove('hidden');
+            } else {
+                alertBox.className = "mb-4 text-xs font-bold p-3 rounded-xl bg-emerald-50 text-emerald-900 border border-emerald-300 leading-relaxed";
+                alertBox.innerHTML = '<i class="fas fa-check-circle text-emerald-600 ml-1"></i> تم إرسال كود التفعيل بنجاح إلى بريدك الإلكتروني. تفقد صندوق الوارد أو مجلد Spam.';
+                alertBox.classList.remove('hidden');
+            }
+        }
+    }
+
+    // ---------- Login ----------
+    $('loginForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        $('loginError').textContent = '';
+        const email = $('loginEmail').value.trim(), password = $('loginPassword').value;
+        if (!email || !password) { $('loginError').textContent = 'اكتب الإيميل وكلمة السر'; return; }
+        setBusy($('loginBtn'), true, 'دخول');
+        try {
+            await api('/api/auth/login', { email, password });
+            location.reload();
+        } catch (err) {
+            if (err.extra?.needs_verification) {
+                try { const r = await api('/api/auth/resend', { email }); goVerify(email, r.resend_after, r); }
+                catch (_) { goVerify(email, 0); }
+            } else {
+                $('loginError').textContent = err.message;
+            }
+        } finally { setBusy($('loginBtn'), false, 'دخول'); }
+    });
+
+    // ---------- Register ----------
+    $('registerForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        $('regError').textContent = '';
+        const name = $('regName').value.trim(), email = $('regEmail').value.trim();
+        const p1 = $('regPassword').value, p2 = $('regPassword2').value;
+        if (!name) { $('regError').textContent = 'اكتب اسمك'; return; }
+        if (p1 !== p2) { $('regError').textContent = 'كلمتين السر مش زي بعض'; return; }
+        setBusy($('regBtn'), true, 'إنشاء الحساب وإرسال الكود');
+        try {
+            const r = await api('/api/auth/register', { name, email, password: p1 });
+            goVerify(r.email, r.resend_after, r);
+        } catch (err) {
+            $('regError').textContent = err.message;
+        } finally { setBusy($('regBtn'), false, 'إنشاء الحساب وإرسال الكود'); }
+    });
+
+    // ---------- Verify ----------
+    $('codeInput').addEventListener('input', e => { e.target.value = e.target.value.replace(/\D/g, '').slice(0, 6); });
+    $('verifyForm').addEventListener('submit', async e => {
+        e.preventDefault();
+        $('verifyError').textContent = '';
+        const code = $('codeInput').value;
+        if (code.length !== 6) { $('verifyError').textContent = 'الكود 6 أرقام'; return; }
+        setBusy($('verifyBtn'), true, 'تفعيل الحساب');
+        try {
+            await api('/api/auth/verify', { email: pendingEmail, code });
+            location.reload();
+        } catch (err) {
+            $('verifyError').textContent = err.message;
+            setBusy($('verifyBtn'), false, 'تفعيل الحساب');
+        }
+    });
+    $('resendBtn').onclick = async () => {
+        $('verifyError').textContent = '';
+        try { const r = await api('/api/auth/resend', { email: pendingEmail }); startResendTimer(r.resend_after); }
+        catch (err) { $('verifyError').textContent = err.message; }
+    };
+    $('backBtn').onclick = () => {
+        clearInterval(resendTimer);
+        $('verifyStep').classList.add('hidden');
+        $('authStep').classList.remove('hidden');
+        showTab('register');
+    };
+})();
+</script>
+</body>
+</html>

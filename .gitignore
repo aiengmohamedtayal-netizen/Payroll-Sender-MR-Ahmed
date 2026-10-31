@@ -1,0 +1,74 @@
+# Python
+__pycache__/
+*.py[cod]
+venv/
+.venv/
+env/
+
+# Secrets and environment configs
+.env
+.env.*
+!.env.example
+email_config.json
+email_config.local.json
+*.pem
+*.key
+auto_sender.py
+
+# User data and SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Spreadsheets (keep sample template files)
+*.xlsx
+*.xls
+*.csv
+!sample_payroll.csv
+!sample_payroll.xlsx
+!static/sample_payroll.csv
+!static/sample_payroll.xlsx
+
+# WhatsApp sessions & profiles
+wa_profile/
+user_data/
+browser_profile/
+
+# Logs and screenshots
+*.log
+sender_log.txt
+debug.log
+error_*.png
+
+# Build files
+dist/
+build/
+*.exe
+*.spec
+
+# Temporary files
+*.tmp
+*.bak
+
+# Node & Neon caches
+.neon
+node_modules/
+
+# Agent & Tests & Scratch
+.agent/
+.pytest_cache/
+scratch/
+
+# Large media files (screen recordings, videos)
+*.mp4
+*.mkv
+*.mov
+
+# OS specific files
+.DS_Store
+Thumbs.db
+__MACOSX/
+._*
+
+# Raw font archive (clean web fonts are stored in static/fonts/thmanyah)
+Thmanyah-Font-Family/

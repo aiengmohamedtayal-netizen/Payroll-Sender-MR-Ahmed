@@ -1,0 +1,406 @@
+/* ==========================================================================
+   Thmanyah Font Family Integration (100% Local, Zero External CDN)
+   ========================================================================== */
+
+/* Light - 300 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Light.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Light.otf') format('opentype');
+    font-weight: 300;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Regular - 400 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Regular.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Medium - 500 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Medium.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Medium.otf') format('opentype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Bold - 700 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Bold.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Black - 900 */
+@font-face {
+    font-family: 'Thmanyah';
+    src: url('../fonts/thmanyah/thmanyahsans/woff2/thmanyahsans-Black.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahsans/otf/thmanyahsans-Black.otf') format('opentype');
+    font-weight: 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Thmanyah Serif Display (Bold - 700) */
+@font-face {
+    font-family: 'Thmanyah Serif Display';
+    src: url('../fonts/thmanyah/thmanyahserifdisplay/woff2/thmanyahserifdisplay-Bold.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahserifdisplay/otf/thmanyahserifdisplay-Bold.otf') format('opentype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Thmanyah Serif Text (Regular - 400) */
+@font-face {
+    font-family: 'Thmanyah Serif Text';
+    src: url('../fonts/thmanyah/thmanyahseriftext/woff2/thmanyahseriftext-Regular.woff2') format('woff2'),
+         url('../fonts/thmanyah/thmanyahseriftext/otf/thmanyahseriftext-Regular.otf') format('opentype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* ==========================================================================
+   Design Tokens & Variables (Light & Luxury Dark Theme)
+   ========================================================================== */
+
+:root {
+    --font-family-primary: 'Thmanyah', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-family-serif-display: 'Thmanyah Serif Display', serif;
+    --font-family-serif-text: 'Thmanyah Serif Text', serif;
+
+    --font-weight-light: 300;
+    --font-weight-regular: 400;
+    --font-weight-medium: 500;
+    --font-weight-bold: 700;
+    --font-weight-black: 900;
+
+    /* Light Palette */
+    --bg-page: #f8fafc;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-border-hover: #cbd5e1;
+    --card-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
+
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+
+    --primary: #10b981;
+    --primary-dark: #059669;
+    --wa-green: #25D366;
+    --wa-dark: #075E54;
+    --wa-light: #dcf8c6;
+
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --input-text: #0f172a;
+
+    --sheet-cell-bg: #ffffff;
+    --sheet-cell-border: #cbd5e1;
+    --sheet-cell-text: #0f172a;
+    --sheet-cell-focus: #f0fdf4;
+}
+
+/* Luxury Dark Mode Palette (Inspired by frontend-ui-dark-ts: #09090b, #18181b, Glassmorphism) */
+html.dark {
+    --bg-page: #09090b;
+    --card-bg: rgba(24, 24, 27, 0.85);
+    --card-border: rgba(255, 255, 255, 0.08);
+    --card-border-hover: rgba(255, 255, 255, 0.16);
+    --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.45);
+
+    --text-main: #fafafa;
+    --text-muted: #a1a1aa;
+    --text-subtle: #71717a;
+
+    --primary: #10b981;
+    --primary-dark: #059669;
+    --wa-green: #25D366;
+    --wa-dark: #075E54;
+    --wa-light: #064e3b;
+
+    --input-bg: #18181b;
+    --input-border: rgba(255, 255, 255, 0.12);
+    --input-text: #fafafa;
+
+    --sheet-cell-bg: #18181b;
+    --sheet-cell-border: #27272a;
+    --sheet-cell-text: #f4f4f5;
+    --sheet-cell-focus: rgba(16, 185, 129, 0.15);
+}
+
+/* Apply Thmanyah Globally Across All Elements */
+.hidden {
+    display: none !important;
+}
+
+html, body, button, input, optgroup, select, textarea,
+h1, h2, h3, h4, h5, h6, p, a, span, label,
+table, thead, tbody, tr, th, td,
+.font-sans, .field, .btn, .tab-btn {
+    font-family: var(--font-family-primary);
+}
+
+body {
+    background-color: var(--bg-page);
+    color: var(--text-main);
+    min-height: 100vh;
+    direction: rtl;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+html.dark body {
+    background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.05), transparent 40%);
+}
+
+/* Specific weights mapping */
+.font-light { font-weight: var(--font-weight-light); }
+.font-normal { font-weight: var(--font-weight-regular); }
+.font-medium, .font-semibold { font-weight: var(--font-weight-medium); }
+.font-bold { font-weight: var(--font-weight-bold); }
+.font-black, .font-extrabold { font-weight: var(--font-weight-black); }
+
+/* Tabular Numbers for Data & Salary Tables */
+table, .font-mono, .sheet-cell {
+    font-feature-settings: 'tnum' 1, 'ss01' 1;
+}
+
+/* Glassmorphic & Polished Cards */
+.dashboard-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 1.25rem;
+    box-shadow: var(--card-shadow);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: box-shadow 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+}
+
+.dashboard-card:hover {
+    border-color: var(--card-border-hover);
+}
+
+html.dark .dashboard-card {
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+}
+
+/* Micro-interaction & Button Styling */
+button {
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* WhatsApp Phone Preview Mockup */
+.wa-mockup {
+    background: #efeae2;
+    background-image: radial-gradient(#d1d7db 1px, transparent 1px);
+    background-size: 16px 16px;
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    border: 2px solid var(--card-border);
+}
+
+html.dark .wa-mockup {
+    background: #0b141a;
+    background-image: radial-gradient(#1f2c34 1px, transparent 1px);
+    border-color: rgba(255, 255, 255, 0.08);
+}
+
+.wa-header {
+    background: #075E54;
+    color: white;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+html.dark .wa-header {
+    background: #1f2c34;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.wa-bubble {
+    background-color: #ffffff;
+    border-radius: 8px 8px 8px 0px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+    position: relative;
+    max-width: 90%;
+    margin-right: auto;
+    font-size: 0.85rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    font-family: var(--font-family-primary);
+}
+
+.wa-bubble-sent {
+    background-color: #dcf8c6;
+    border-radius: 8px 8px 0px 8px;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+html.dark .wa-bubble-sent {
+    background-color: #005c4b;
+    color: #e9edef;
+    border-color: #005c4b;
+}
+
+/* Status Badges */
+.badge-pending {
+    background-color: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+html.dark .badge-pending {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: #fbbf24;
+    border-color: rgba(245, 158, 11, 0.3);
+}
+
+.badge-sending {
+    background-color: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #bfdbfe;
+    animation: pulse 1.5s infinite;
+}
+html.dark .badge-sending {
+    background-color: rgba(59, 130, 246, 0.15);
+    color: #60a5fa;
+    border-color: rgba(59, 130, 246, 0.3);
+}
+
+.badge-sent {
+    background-color: #d1fae5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+}
+html.dark .badge-sent {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.3);
+}
+
+.badge-failed {
+    background-color: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fecaca;
+}
+html.dark .badge-failed {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+/* File Drop Zone */
+.dropzone {
+    border: 2px dashed #cbd5e1;
+    background: #f8fafc;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+html.dark .dropzone {
+    border-color: #27272a;
+    background: #18181b;
+}
+
+.dropzone:hover, .dropzone.dragover {
+    border-color: #10b981;
+    background: #ecfdf5;
+}
+html.dark .dropzone:hover, html.dark .dropzone.dragover {
+    border-color: #10b981;
+    background: rgba(16, 185, 129, 0.08);
+}
+
+/* Sheet Grid Cells */
+.sheet-cell {
+    border: 1px solid var(--sheet-cell-border);
+    padding: 6px 8px;
+    background: var(--sheet-cell-bg);
+    color: var(--sheet-cell-text);
+    min-width: 110px;
+    outline: none;
+    transition: background-color 0.15s, outline 0.15s;
+    font-family: var(--font-family-primary);
+}
+
+.sheet-cell:focus {
+    background-color: var(--sheet-cell-focus);
+    outline: 2px solid #10b981;
+    z-index: 10;
+}
+
+/* Pairing Code Slots */
+.pairing-code-slot {
+    width: 44px;
+    height: 52px;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: 800;
+    font-family: monospace, var(--font-family-primary);
+    background: #ffffff;
+    border: 2px solid #cbd5e1;
+    color: #0f172a;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+}
+
+html.dark .pairing-code-slot {
+    background: #18181b;
+    border-color: rgba(255, 255, 255, 0.15);
+    color: #34d399;
+    box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+html.dark ::-webkit-scrollbar-thumb {
+    background: #27272a;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+    background: #3f3f46;
+}
