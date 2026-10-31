@@ -9,12 +9,7 @@ echo ========================================================
 python -m pip install -r requirements.txt pyinstaller
 if errorlevel 1 goto fail
 
-python -m PyInstaller --noconfirm --clean --onefile --name PayrollSender ^
-  --add-data "templates;templates" --add-data "static;static" ^
-  --collect-all selenium --collect-submodules uvicorn --collect-submodules anyio ^
-  --collect-submodules dns --hidden-import openpyxl --hidden-import xlrd ^
-  --hidden-import multipart --hidden-import python_multipart --hidden-import email_service ^
-  launcher.py
+python -m PyInstaller PayrollSender.spec --noconfirm --clean
 if errorlevel 1 goto fail
 
 echo.

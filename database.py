@@ -23,6 +23,7 @@ logger = logging.getLogger("payroll.database")
 # Load environment variables (.env.local or .env)
 # Priority: Existing os.environ -> .env.local -> .env
 DATA_DIR = os.path.dirname(sys.executable) if getattr(sys, "frozen", False) else os.path.dirname(os.path.abspath(__file__))
+BASE_DIR = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
 env_local = os.path.join(DATA_DIR, ".env.local")
 env_file = os.path.join(DATA_DIR, ".env")
 
@@ -30,6 +31,10 @@ if os.path.exists(env_local):
     load_dotenv(env_local)
 elif os.path.exists(env_file):
     load_dotenv(env_file)
+elif os.path.exists(os.path.join(BASE_DIR, ".env.local")):
+    load_dotenv(os.path.join(BASE_DIR, ".env.local"))
+elif os.path.exists(os.path.join(BASE_DIR, ".env")):
+    load_dotenv(os.path.join(BASE_DIR, ".env"))
 
 # Fetch DATABASE_URL
 RAW_DATABASE_URL = os.environ.get("DATABASE_URL", "").strip()
@@ -53,7 +58,9 @@ def get_normalized_database_url(url: str = RAW_DATABASE_URL) -> str:
 DATABASE_URL = get_normalized_database_url()
 
 if not DATABASE_URL:
-    logger.warning("DATABASE_URL is not configured in environment or .env/.env.local")
+    logger.warning("DATABASE_URL is not configured; falling back to local SQLite.")
+    sqlite_path = os.path.join(DATA_DIR, "users.db")
+    DATABASE_URL = f"sqlite:///{sqlite_path}"
 
 # Declarative Base
 Base = declarative_base()
@@ -65,14 +72,20 @@ Base = declarative_base()
 # - pool_size=10, max_overflow=20: Handles concurrency smoothly
 try:
     if DATABASE_URL:
-        engine = create_engine(
-            DATABASE_URL,
-            pool_size=10,
-            max_overflow=20,
-            pool_recycle=1800,
-            pool_pre_ping=True,
-            connect_args={"connect_timeout": 15} if "sqlite" not in DATABASE_URL else {}
-        )
+        if DATABASE_URL.startswith("sqlite"):
+            engine = create_engine(
+                DATABASE_URL,
+                connect_args={"check_same_thread": False}
+            )
+        else:
+            engine = create_engine(
+                DATABASE_URL,
+                pool_size=10,
+                max_overflow=20,
+                pool_recycle=1800,
+                pool_pre_ping=True,
+                connect_args={"connect_timeout": 15}
+            )
     else:
         # Placeholder or dummy engine if unconfigured
         engine = None

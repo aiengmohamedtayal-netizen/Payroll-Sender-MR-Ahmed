@@ -94,7 +94,16 @@ def get_config_path() -> str:
     custom_path = os.environ.get("EMAIL_CONFIG_PATH")
     if custom_path:
         return os.path.abspath(custom_path)
-    return os.path.join(DATA_DIR, DEFAULT_CONFIG_FILENAME)
+    data_path = os.path.join(DATA_DIR, DEFAULT_CONFIG_FILENAME)
+    if os.path.exists(data_path):
+        return data_path
+    base_path = os.path.join(BASE_DIR, DEFAULT_CONFIG_FILENAME)
+    if os.path.exists(base_path):
+        return base_path
+    cwd_path = os.path.join(os.getcwd(), DEFAULT_CONFIG_FILENAME)
+    if os.path.exists(cwd_path):
+        return cwd_path
+    return data_path
 
 
 def is_production() -> bool:

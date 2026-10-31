@@ -45,6 +45,8 @@ dist/
 build/
 *.exe
 *.spec
+!PayrollSender.spec
+!app.ico
 
 # Temporary files
 *.tmp
