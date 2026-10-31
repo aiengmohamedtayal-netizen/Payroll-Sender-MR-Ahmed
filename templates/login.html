@@ -42,13 +42,19 @@
         @keyframes bubble-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
         .bubble-in { animation: bubble-in .6s ease-out .15s both; }
         @media (prefers-reduced-motion: reduce) { .bubble-in { animation: none; } }
+        @media (min-width: 1024px) {
+            .brand-showcase { display: flex !important; }
+        }
+        @media (max-width: 1023px) {
+            .brand-showcase { display: none !important; }
+        }
     </style>
 </head>
-<body class="min-h-screen">
+<body class="min-h-screen bg-white">
 <div class="min-h-screen grid lg:grid-cols-2">
 
     <!-- Form side -->
-    <main class="flex items-center justify-center px-5 py-10 order-2 lg:order-1">
+    <main class="flex items-center justify-center px-5 py-10 order-2 lg:order-1 bg-white">
         <div class="w-full max-w-md">
             <div class="flex items-center gap-3 mb-10">
                 <div class="w-11 h-11 rounded-xl bg-emerald-600 flex items-center justify-center text-white">
@@ -152,7 +158,7 @@
     </main>
 
     <!-- Brand side -->
-    <aside class="hidden lg:flex order-1 lg:order-2 bg-emerald-950 text-white items-center justify-center p-12 relative overflow-hidden">
+    <aside class="brand-showcase order-1 lg:order-2 bg-[#08291e] text-white items-center justify-center p-12 relative overflow-hidden">
         <div class="absolute -top-24 -right-20 w-72 h-72 rounded-full bg-emerald-700/20"></div>
         <div class="absolute -bottom-32 -left-24 w-96 h-96 rounded-full bg-emerald-700/20"></div>
         <div class="max-w-lg w-full relative z-10 space-y-9">

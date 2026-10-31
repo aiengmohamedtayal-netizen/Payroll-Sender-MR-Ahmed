@@ -215,7 +215,8 @@ html.dark {
 }
 
 /* Apply Thmanyah Globally Across All Elements */
-.hidden {
+/* Ensure hidden utility works on modals without breaking responsive flex classes */
+.hidden:not([class*="lg:"]):not([class*="md:"]):not([class*="sm:"]) {
     display: none !important;
 }
 
