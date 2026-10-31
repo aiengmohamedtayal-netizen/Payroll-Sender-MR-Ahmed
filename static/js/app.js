@@ -620,8 +620,8 @@ function gridAddRow(vals = []) {
 
     // Delete Row button cell
     const delCell = tr.insertCell();
-    delCell.className = 'sheet-del-cell';
-    delCell.innerHTML = `<button type="button" onclick="gridDeleteRow(this)" class="inline-flex items-center justify-center w-6 h-6 rounded-md text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:text-rose-400 dark:hover:bg-rose-950/40 transition text-xs" title="حذف هذا الصف"><i class="fas fa-trash-can text-xs"></i></button>`;
+    delCell.className = 'sheet-del-cell border border-slate-200 dark:border-zinc-800 bg-slate-50/50 dark:bg-zinc-900/50 text-center px-1 py-1.5';
+    delCell.innerHTML = `<button type="button" onclick="gridDeleteRow(this)" class="text-slate-400 hover:text-rose-600 transition text-xs p-1" title="حذف هذا الصف"><i class="fas fa-trash-alt"></i></button>`;
 }
 
 function gridEnsureRows(count) {

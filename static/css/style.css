@@ -457,6 +457,18 @@ html.dark .dropzone:hover, html.dark .dropzone.dragover {
 }
 
 /* Sheet Grid Cells & Rows (Light & Dark) */
+#sheetGrid thead th {
+    background-color: #0f172a !important;
+    color: #ffffff !important;
+    border: 1px solid #334155 !important;
+    padding: 8px 10px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+}
+
 .sheet-cell {
     border: 1px solid var(--sheet-cell-border) !important;
     padding: 7px 10px;
